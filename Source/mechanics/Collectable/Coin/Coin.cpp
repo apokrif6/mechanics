@@ -1,28 +1,22 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+﻿#include "Coin.h"
 
-
-#include "Coin.h"
-
-
-// Sets default values
 ACoin::ACoin()
 {
 	CoinMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Coin mesh"));
-
-	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere component"));
-	SphereComponent->SetSphereRadius(250.f);
-	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &ACoin::OnCollect);
-	
+	//put there your mesh
+	static ConstructorHelpers::FObjectFinder<UStaticMesh>CoinMeshAsset(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Cube.Shape_Cube'"));
+	CoinMesh->SetStaticMesh(CoinMeshAsset.Object);
+	CoinMesh->SetCollisionProfileName(TEXT("Trigger"));
+	CoinMesh->SetupAttachment(RootComponent);
 }
 
-// Called when the game starts or when spawned
 void ACoin::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	CoinMesh->OnComponentBeginOverlap.AddDynamic(this, &ACoin::OnCollect);
 }
 
-// Called every frame
 void ACoin::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -34,5 +28,6 @@ void ACoin::OnCollect(UPrimitiveComponent* OverlappedComponent, AActor* OtherAct
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, TEXT("Collected!"));
+		Destroy();
 	}
 }

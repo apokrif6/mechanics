@@ -2,12 +2,9 @@
 
 #include "mechanics/mechanicsCharacter.h"
 #include "mechanics/MyHUD/MyHUD.h"
-// Sets default values
+
 ANPC::ANPC()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
 	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("Box collision"));
 	BoxCollision->InitBoxExtent(FVector(250, 250, 100));
 	BoxCollision->SetCollisionProfileName(TEXT("Trigger"));
