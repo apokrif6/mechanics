@@ -11,34 +11,37 @@ void APlatform::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GlobalStartLocation = GetActorLocation();
-	GlobalTargetLocation = GetTransform().TransformPosition(TargetLocation);
+	LoopMove();
 }
 
 void APlatform::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	FVector Location = GetActorLocation();
-	
-	const float Distance = (GlobalTargetLocation - GlobalStartLocation).Size();
-	const float DistanceTraveled = (Location - GlobalStartLocation).Size();
-
-	if (DistanceTraveled >= Distance)
-	{
-		SwapTarget();
-	}
-
-	FVector Direction = (GlobalTargetLocation - GlobalStartLocation).GetSafeNormal();
-
-	Location += Speed * Direction * DeltaTime;
-
-	SetActorLocation(Location);
+	Timeline.TickTimeline(DeltaTime);
 }
 
-void APlatform::SwapTarget()
+void APlatform::HandleMovingProgress(float Value)
 {
-	FVector LocationToSwap = GlobalStartLocation;
-	GlobalStartLocation = GlobalTargetLocation;
-	GlobalTargetLocation = LocationToSwap;
+	const FVector LocationToMove = FMath::Lerp(GlobalStartLocation, GlobalTargetLocation, Value);
+	SetActorLocation(LocationToMove);
+}
+
+
+void APlatform::LoopMove()
+{
+	if (CurveFloat)
+	{
+		FOnTimelineFloat ProgressFunction;
+
+		ProgressFunction.BindUFunction(this, HandleRequestFunctionName);
+
+		Timeline.AddInterpFloat(CurveFloat, ProgressFunction);
+		Timeline.SetLooping(true);
+
+		GlobalStartLocation = GetActorLocation();
+		GlobalTargetLocation = GetTransform().TransformPosition(TargetLocation);
+
+		Timeline.PlayFromStart();
+	}
 }

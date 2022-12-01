@@ -1,8 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/TimelineComponent.h"
 #include "Engine/StaticMeshActor.h"
 #include "Platform.generated.h"
 
@@ -17,17 +16,27 @@ public:
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;
+	
+	UPROPERTY(EditAnywhere)
+	FTimeline Timeline;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float Speed = 50.f;
+	UPROPERTY(EditAnywhere, Category = "Timeline")
+	float MaxHeight;
+
+	UPROPERTY(EditAnywhere, Category = "Timeline")
+	UCurveFloat* CurveFloat;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (MakeEditWidget))
 	FVector TargetLocation;
 
+	UFUNCTION()
+	void HandleMovingProgress(float Value);
 private:
 	FVector GlobalStartLocation;
 	
 	FVector GlobalTargetLocation;
 
-	void SwapTarget();
+	void LoopMove();
+
+	FName HandleRequestFunctionName = "HandleMovingProgress";
 };
