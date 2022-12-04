@@ -31,12 +31,17 @@ public:
 
 	UFUNCTION()
 	void HandleMovingProgress(float Value);
-private:
+
+protected:
+	FName HandleRequestFunctionName = "HandleMovingProgress";
+
 	FVector GlobalStartLocation;
 	
 	FVector GlobalTargetLocation;
+	
+	void SetLooping(bool ShouldLoop);
 
-	void LoopMove();
+	void BasicSetup();
 
-	FName HandleRequestFunctionName = "HandleMovingProgress";
+	virtual void Move();
 };

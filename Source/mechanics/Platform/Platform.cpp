@@ -2,16 +2,12 @@
 
 APlatform::APlatform()
 {
-	PrimaryActorTick.bCanEverTick = true;
-	
-	SetMobility(EComponentMobility::Movable);
+	BasicSetup();
 }
 
 void APlatform::BeginPlay()
 {
 	Super::BeginPlay();
-
-	LoopMove();
 }
 
 void APlatform::Tick(float DeltaTime)
@@ -27,21 +23,19 @@ void APlatform::HandleMovingProgress(float Value)
 	SetActorLocation(LocationToMove);
 }
 
-
-void APlatform::LoopMove()
+void APlatform::SetLooping(bool ShouldLoop = false)
 {
-	if (CurveFloat)
-	{
-		FOnTimelineFloat ProgressFunction;
+	Timeline.SetLooping(ShouldLoop);
 
-		ProgressFunction.BindUFunction(this, HandleRequestFunctionName);
+}
 
-		Timeline.AddInterpFloat(CurveFloat, ProgressFunction);
-		Timeline.SetLooping(true);
+void APlatform::BasicSetup()
+{
+	PrimaryActorTick.bCanEverTick = true;
+	
+	SetMobility(EComponentMobility::Movable);
+}
 
-		GlobalStartLocation = GetActorLocation();
-		GlobalTargetLocation = GetTransform().TransformPosition(TargetLocation);
-
-		Timeline.PlayFromStart();
-	}
+void APlatform::Move()
+{
 }
